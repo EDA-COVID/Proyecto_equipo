@@ -43,3 +43,24 @@ def df_covid(dt, val1=None):
     first = dt.explode(val1)
     dt_covid= pd.json_normalize(json.loads(first.to_json(orient="records")))
     return dt_covid
+# %%
+def remove_outlier(df_in, col_name):
+    """
+    What it does:
+        # This function accept a dataframe, remove outliers, return cleaned data in a new dataframe.
+
+    What it needs:
+        # The dataframe and the column to check.
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @andreeaman
+    """
+    q1 = df_in[col_name].quantile(0.25)
+    q3 = df_in[col_name].quantile(0.75)
+    iqr = q3-q1 #Interquartile range
+    fence_low  = q1-1.5*iqr
+    fence_high = q3+1.5*iqr
+    df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
+    return df_out
