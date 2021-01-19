@@ -1,4 +1,5 @@
 import pandas as pd 
+import json
 
 def extract_dict_values(df_name, column_df):
     df_final = None
@@ -24,3 +25,21 @@ def filter_df(df,filter_column,val1,val2=None,val3=None,val4=None,val5=None):
     mask=(df[filter_column] == val1) | (df[filter_column] == val2)|(df[filter_column] == val3)|(df[filter_column] == val4)|(df     [filter_column] == val5)
     filtered_df=df.loc[mask]
     return filtered_df
+
+
+def df_covid(dt, val1=None):
+    """
+    What it does:
+        # This function extracts the dictionary from the list in the "data" column 
+
+    What it needs:
+        # to get the final data set we use the explode function to extract the data from "data" and json_normalize to extract the columns inside "data" 
+
+    What it returns:
+        # the complete dataframe
+        GITHUB ID: @mardeldom
+    """
+
+    first = dt.explode(val1)
+    dt_covid= pd.json_normalize(json.loads(first.to_json(orient="records")))
+    return dt_covid
