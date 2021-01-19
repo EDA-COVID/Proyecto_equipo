@@ -43,6 +43,22 @@ def df_covid(dt, val1=None):
     first = dt.explode(val1)
     dt_covid= pd.json_normalize(json.loads(first.to_json(orient="records")))
     return dt_covid
+    
+def datetime(dt=None, val1=None):
+    """
+    What it does:
+        # This function changes the date column from object to datetime. 
+
+    What it needs:
+        #  The function to_datetime change the data type
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+        GITHUB ID: @mardeldom
+    """
+    dt[val1]= dt[val1].apply(pd.to_datetime)
+    return datetime
+
 # %%
 def remove_outlier(df_in, col_name):
     """
@@ -64,3 +80,4 @@ def remove_outlier(df_in, col_name):
     fence_high = q3+1.5*iqr
     df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
     return df_out
+
