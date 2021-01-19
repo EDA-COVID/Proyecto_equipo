@@ -57,7 +57,7 @@ def datetime(dt=None, val1=None):
         GITHUB ID: @mardeldom
     """
     dt[val1]= dt[val1].apply(pd.to_datetime)
-    return datetime
+    return dt
 
 # %%
 def remove_outlier(df_in, col_name):

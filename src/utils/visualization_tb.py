@@ -10,7 +10,6 @@ import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
-from pycountry_convert import country_name_to_country_alpha3,country_alpha2_to_country_name
 
 
 
@@ -29,7 +28,7 @@ def plot_per_column_distribution(df, n_graph_shown, n_graph_per_row,figure_name)
     """
     nunique = df.nunique()
     df = df[[col for col in df if nunique[col] > 1 and nunique[col] < 50]] # For displaying purposes, pick columns that have between 1 and 50 unique values
-    nrow, ncol = df.shape
+    ncol = df.shape
     column_names = list(df)
     n_graph_row = (ncol + n_graph_per_row - 1) / n_graph_per_row
     plt.figure(num = None, figsize = (6 * n_graph_per_row, 8 * n_graph_row), dpi = 80, facecolor = 'w', edgecolor = 'k')
