@@ -10,6 +10,9 @@ import seaborn as sns
 import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+
 
 
 
@@ -84,3 +87,34 @@ def detect_outliers_df(df,col_to_check,file_name):
 
 
 # %%
+def plot_clean_columns(df_name, df_column, y_label):
+
+    created_df = df_name.loc[:, ['location', df_column]]
+    created_df = created_df.dropna()
+    created_df = created_df.loc[created_df[df_column]!=0.0]
+    print(created_df.nunique())
+    print('------')
+
+    b = created_df['location'].value_counts()
+    print(b)
+    print('------')
+    b.plot(kind='pie', autopct = "%1.0f%%", colors=['pink', 'lightblue','violet', 'lightgreen', 'gold'])
+    plt.xlabel('total data')
+    plt.ylabel('')
+    print('------')
+
+    for f in set(created_df['location']):
+        ax = created_df[created_df['location']==f].plot(y=df_column, title=f, legend=False, xlabel='', color='lightgreen', ylabel=y_label)
+        ax.set_xlim(pd.Timestamp('2020-02-01'), pd.Timestamp('2021-02-01'))
+        ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+        plt.gcf().autofmt_xdate()
+        if f == 'Spain':
+            plt.axvline('2020-03-14')
+            plt.axvline('2020-06-21', color='lightblue')
+            plt.axvline('2020-10-25')
+        if f == 'Colombia':
+            plt.axvline('2020-03-12')
+            plt.axvline('2020-08-31', color='lightblue')
+        if f == 'Chile':
+            plt.axvline('2020-03-18')
