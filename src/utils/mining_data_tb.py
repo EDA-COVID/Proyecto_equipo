@@ -1,5 +1,6 @@
 import pandas as pd 
 import json
+from utils.folders_tb import jsonlink_df
 
 def extract_dict_values(df_name, column_df):
     df_final = None
@@ -81,3 +82,43 @@ def remove_outlier(df_in, col_name):
     df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
     return df_out
 
+def data_complete_clean():
+    """
+    What it does:
+        # This function includes all the steps necessary to obtain the definitive dataset. 
+        #It opens the json in python from the url to keep it up to date, extracts the data column, which is made up of a dictionary, eliminates the columns with too many nan and modifies the type of the data.date column from object to datetime. 
+
+    What it needs:
+        # we need to know which columns dominate the nan values in order to eliminate them
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @mardeldom
+    """
+    covid_complete = jsonlink_df('https://covid.ourworldindata.org/data/owid-covid-data.json').T
+    covid_complete= df_covid(covid_complete,val1="data")
+    covid_complete= covid_complete.drop(["continent", "extreme_poverty", "human_development_index","hospital_beds_per_thousand", "diabetes_prevalence","female_smokers","cardiovasc_death_rate", "aged_70_older", "aged_65_older", "median_age", "population_density", "gdp_per_capita", "male_smokers","data.new_vaccinations","data.total_vaccinations_per_hundred","data.total_vaccinations","data.weekly_hosp_admissions_per_million","data.weekly_hosp_admissions","data.weekly_icu_admissions_per_million","data.weekly_icu_admissions","data.new_vaccinations_smoothed","data.new_vaccinations_smoothed_per_million","data.hosp_patients","data.hosp_patients_per_million","data.icu_patients","data.icu_patients_per_million","handwashing_facilities"],axis=1)
+    covid_complete= datetime(dt=covid_complete, val1="data.date")
+    return covid_complete
+
+def data_paises_clean():
+    """
+    What it does:
+        #This function includes all the steps necessary to obtain the definitive dataset, by filtering the countries we are going to analyse.
+        #It opens the json in python from the url to keep it up to date, extracts the data column, which is made up of a dictionary, eliminates the columns with too many nan and modifies the type of the data.date column from object to datetime. 
+
+    What it needs:
+        # we need to know which columns dominate the nan values in order to eliminate them
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @mardeldom
+    """
+    covid_paises = jsonlink_df('https://covid.ourworldindata.org/data/owid-covid-data.json').T
+    covid_paises= filter_df(covid_paises,'location','Argentina','Russia', 'Colombia', 'Chile', 'Spain')
+    covid_paises= df_covid(covid_paises,val1="data")
+    covid_paises= covid_paises.drop(["continent", "extreme_poverty", "human_development_index","hospital_beds_per_thousand", "diabetes_prevalence","female_smokers","cardiovasc_death_rate", "aged_70_older", "aged_65_older", "median_age", "population_density", "gdp_per_capita", "male_smokers","data.new_vaccinations","data.total_vaccinations_per_hundred","data.total_vaccinations","data.weekly_hosp_admissions_per_million","data.weekly_hosp_admissions","data.weekly_icu_admissions_per_million","data.weekly_icu_admissions","data.new_vaccinations_smoothed","data.new_vaccinations_smoothed_per_million","data.hosp_patients","data.hosp_patients_per_million","data.icu_patients","data.icu_patients_per_million","handwashing_facilities"],axis=1)
+    covid_paises= datetime(dt=covid_paises, val1="data.date")
+    return covid_paises
