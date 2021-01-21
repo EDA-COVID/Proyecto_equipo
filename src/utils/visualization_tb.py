@@ -14,39 +14,30 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-
-
-# %%
-def plot_per_column_distribution(df, n_graph_shown, n_graph_per_row,figure_name):
+def remove_outlier_con_filtro(df_inicial, df_in, col_name):
     """
     What it does:
-        # This function accept a dataframe and plots the histogram of each column.
+        # This function accepts 2 dataframes df_initial(without the filtered values) &df_in(with the filtered values), remove outliers, return cleaned data in a new dataframe.
 
-    What it needs/What it returns:
-        # The dataframe, the number of columns to show(n_graph_shown), also it needs the distribution of how the suplots will           be shown (n_graph_per_row) and finally the name of the file(figure_name) in order to save the image.
+    What it needs:
+        # The dataframes and the column to check.
 
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
     GITHUB ID: @andreeaman
     """
-    nunique = df.nunique()
-    df = df[[col for col in df if nunique[col] > 1 and nunique[col] < 50]] # For displaying purposes, pick columns that have between 1 and 50 unique values
-    nrow, ncol = df.shape
-    column_names = list(df)
-    n_graph_row = (ncol + n_graph_per_row - 1) / n_graph_per_row
-    plt.figure(num = None, figsize = (6 * n_graph_per_row, 8 * n_graph_row), dpi = 80, facecolor = 'w', edgecolor = 'k')
-    for i in range(min(ncol, n_graph_shown)):
-        plt.subplot(n_graph_row, n_graph_per_row, i + 1)
-        column_df = df.iloc[:, i]
-        if (not np.issubdtype(type(column_df.iloc[0]), np.number)):
-            value_counts = column_df.value_counts()
-            value_counts.plot.bar()
-        else:
-            column_df.hist()
-        plt.ylabel('counts')
-        plt.xticks(rotation = 90)
-        plt.title(f'{column_names[i]} (column {i})')
-    plt.tight_layout(pad = 1.0, w_pad = 1.0, h_pad = 1.0)
-    plt.savefig('..\\resources\\plots\\{}.png'.format(figure_name))
-    plt.show()
+    # df_inicial=todos los valores menos el filtro
+    # df_in= valores con filtro
+    q1 = df_in[col_name].quantile(0.25)
+    q3 = df_in[col_name].quantile(0.75)
+    iqr = q3-q1 #Interquartile range
+    fence_low  = q1-1.5*iqr
+    fence_high = q3+1.5*iqr
+    df_out_filtro = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
+    df_out=pd.concat([df_inicial,df_out_filtro])
+    return df_out
+
 
 
 # %%
@@ -118,3 +109,96 @@ def plot_clean_columns(df_name, df_column, y_label):
             plt.axvline('2020-08-31', color='lightblue')
         if f == 'Chile':
             plt.axvline('2020-03-18')
+    
+def boxplots_per_country(df,file_name):
+    """
+    What it does:
+        # This function accepts covid dataframe and shows the outliers for all columns, except date and .
+
+    What it needs:
+        # The dataframe 
+
+    What it returns:
+        # Returns a the subplots/country
+ 
+    GITHUB ID: @andreeaman
+    """
+
+
+    fig, axes = plt.subplots(8, 3, figsize=(20, 30))
+    #no puedo plotear las columnas: 'data.tests_units','data.date','data.total_tests'
+    #27 columnas
+    # 3 filas y 3 columnas
+    fig.suptitle('Outliers by Country',fontsize=20)
+
+    sns.boxplot(ax=axes[0, 0], data=df, x='location', y='population')
+    sns.boxplot(ax=axes[0, 1], data=df, x='location', y='life_expectancy')
+    sns.boxplot(ax=axes[0, 2], data=df, x='location', y='data.total_tests')
+    sns.boxplot(ax=axes[1, 0], data=df, x='location', y='data.new_tests')
+    sns.boxplot(ax=axes[1, 1], data=df, x='location', y='data.total_tests_per_thousand')
+    sns.boxplot(ax=axes[1, 2], data=df, x='location', y='data.new_tests_per_thousand')
+    sns.boxplot(ax=axes[2, 0], data=df, x='location', y='data.stringency_index')
+    sns.boxplot(ax=axes[2, 1], data=df, x='location', y='data.new_tests_smoothed')
+    sns.boxplot(ax=axes[2, 2], data=df, x='location', y='data.new_tests_smoothed_per_thousand')
+    sns.boxplot(ax=axes[3, 0], data=df, x='location', y='data.total_cases')
+    sns.boxplot(ax=axes[3, 1], data=df, x='location', y='data.new_cases')
+    sns.boxplot(ax=axes[3, 2], data=df, x='location', y='data.total_cases_per_million')
+    sns.boxplot(ax=axes[4, 0], data=df, x='location', y='data.new_cases_per_million')
+    sns.boxplot(ax=axes[4, 1], data=df, x='location', y='data.new_cases_smoothed')
+    sns.boxplot(ax=axes[4, 2], data=df, x='location', y='data.total_deaths')
+    sns.boxplot(ax=axes[5, 0], data=df, x='location', y='data.new_deaths')
+    sns.boxplot(ax=axes[5, 1], data=df, x='location', y='data.new_deaths_smoothed')
+    sns.boxplot(ax=axes[5, 2], data=df, x='location', y='data.new_cases_smoothed_per_million')
+    sns.boxplot(ax=axes[6, 0], data=df, x='location', y='data.total_deaths_per_million')
+    sns.boxplot(ax=axes[6, 1], data=df, x='location', y='data.new_deaths_per_million')
+    sns.boxplot(ax=axes[6, 2], data=df, x='location', y='data.new_deaths_smoothed_per_million')
+    sns.boxplot(ax=axes[7, 0], data=df, x='location', y='data.positive_rate')
+    sns.boxplot(ax=axes[7, 1], data=df, x='location', y='data.tests_per_case')
+    sns.boxplot(ax=axes[7, 2], data=df, x='location', y='data.reproduction_rate')
+    plt.savefig('..\\resources\\plots\\Outliers by Country{}.png'.format(file_name))
+
+def heatmap_with_column_filters (df,col_to_filter,filter_value,col1,col2,col3,col4,col5,col6):
+    """
+    What it does:
+        # This function shows the heatmap of the dataframe(selection of 6 columns) and saves the image under the name you input.
+    What it needs:
+        # The dataframe and the filename
+    What it returns:
+        # Shows the heatmap
+    GITHUB ID: @andreeaman
+    """
+    df2 = df[[col_to_filter,col1,col2,col3,col4,col5,col6]]
+    # correlation 
+    df3 = df2[(df2[col_to_filter] == filter_value)]                       
+    dfCorr = df3.drop([col_to_filter], axis=1).corr()
+    fig = plt.figure(figsize=(22,10))
+    plt.subplot(121)   #  subplot 1 - female
+    plt.title('{}'.format(filter_value))
+    sns.heatmap(dfCorr, annot=True, fmt='.2f', square=True, cmap = 'Reds_r')
+    plt.savefig('..\\resources\\plots\\heatmap_{}.png'.format(filter_value))
+
+def remove_outlier_filtro(df_inicial, df_in, col_name):
+    """
+    What it does:
+        # This function accepts 2 dataframes df_initial(without the filtered values) &df_in(with the filtered values), remove outliers, return cleaned data in a new dataframe.
+
+    What it needs:
+        # The dataframes and the column to check.
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @andreeaman
+    """
+
+    # df_inicial=todos los valores menos el filtro
+    # df_in= valores con filtro
+    q1 = df_in[col_name].quantile(0.25)
+    q3 = df_in[col_name].quantile(0.75)
+    iqr = q3-q1 #Interquartile range
+    fence_low  = q1-1.5*iqr
+    fence_high = q3+1.5*iqr
+    df_out_filtro = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
+    df_out=pd.concat([df_inicial,df_out_filtro])
+    return df_out
+# %%
