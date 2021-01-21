@@ -14,7 +14,7 @@ def read_json(fullpath):
 def home():
     settings_file = os.path.dirname(__file__) + os.sep + "json1.json"
     print(settings_file)
-    json_readed = read_json(fullpath= r"C:\Users\Usuario\Desktop\MY_GIT_HUB\Proyecto_equipo - copia\src\utils\covid_group_A.json")
+    json_readed = read_json(fullpath= r"C:\Users\Anais\Documents\BRIDGE\COVID\src\covid_group_A.json")
 
     return json_readed
 
@@ -37,4 +37,4 @@ def group_token():
     else:
         return "No es el identificador correcto"
 
-app.run()
+app.run() #ip 0000 crear archivo settings
