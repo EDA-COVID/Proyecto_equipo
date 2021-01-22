@@ -122,15 +122,3 @@ def data_paises_clean():
     covid_paises= covid_paises.drop(["continent", "extreme_poverty", "human_development_index","hospital_beds_per_thousand", "diabetes_prevalence","female_smokers","cardiovasc_death_rate", "aged_70_older", "aged_65_older", "median_age", "population_density", "gdp_per_capita", "male_smokers","data.new_vaccinations","data.total_vaccinations_per_hundred","data.total_vaccinations","data.weekly_hosp_admissions_per_million","data.weekly_hosp_admissions","data.weekly_icu_admissions_per_million","data.weekly_icu_admissions","data.new_vaccinations_smoothed","data.new_vaccinations_smoothed_per_million","data.hosp_patients","data.hosp_patients_per_million","data.icu_patients","data.icu_patients_per_million","handwashing_facilities"],axis=1)
     covid_paises= datetime(dt=covid_paises, val1="data.date")
     return covid_paises
-
-def group(dt=data_complete_clean(),col1=None, col2=None, col3=None, col4=None):
-    #Agrupación de las variables
-    covid = dt.loc[:,[col1, col2, col3, col4]]
-    #covid = covid.dropna()
-    group_col= covid.groupby(col1).mean()
-    return group_col
-
-def sort_columns(dt=None, col_name=None):
-    dt_col= dt.sort_values(col_name, ascending=True).reset_index()
-    mask=dt_col.loc[(dt_col["location"]=="Argentina") | (dt_col["location"]=="Chile") | (dt_col["location"]=="Spain") | (dt_col["location"]=="Colombia") |(dt_col["location"]=="Russia")]
-    return mask

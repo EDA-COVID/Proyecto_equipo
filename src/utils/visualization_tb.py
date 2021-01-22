@@ -14,10 +14,10 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-def remove_outlier_con_filtro(df_inicial, df_in, col_name):
+def remove_outlier(df_in, col_name):
     """
     What it does:
-        # This function accepts 2 dataframes df_initial(without the filtered values) &df_in(with the filtered values), remove outliers, return cleaned data in a new dataframe.
+        # This function accepts a dataframes , remove outliers, return cleaned data in a new dataframe.
 
     What it needs:
         # The dataframes and the column to check.
@@ -27,15 +27,13 @@ def remove_outlier_con_filtro(df_inicial, df_in, col_name):
  
     GITHUB ID: @andreeaman
     """
-    # df_inicial=todos los valores menos el filtro
-    # df_in= valores con filtro
+
     q1 = df_in[col_name].quantile(0.25)
     q3 = df_in[col_name].quantile(0.75)
     iqr = q3-q1 #Interquartile range
     fence_low  = q1-1.5*iqr
     fence_high = q3+1.5*iqr
-    df_out_filtro = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
-    df_out=pd.concat([df_inicial,df_out_filtro])
+    df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
     return df_out
 
 
@@ -123,38 +121,32 @@ def boxplots_per_country(df,file_name):
  
     GITHUB ID: @andreeaman
     """
-
-
-    fig, axes = plt.subplots(8, 3, figsize=(20, 30))
+    fig, axes = plt.subplots(7, 3, figsize=(20, 30))
     #no puedo plotear las columnas: 'data.tests_units','data.date','data.total_tests'
     #27 columnas
     # 3 filas y 3 columnas
     fig.suptitle('Outliers by Country',fontsize=20)
-
-    sns.boxplot(ax=axes[0, 0], data=df, x='location', y='population')
-    sns.boxplot(ax=axes[0, 1], data=df, x='location', y='life_expectancy')
-    sns.boxplot(ax=axes[0, 2], data=df, x='location', y='data.total_tests')
-    sns.boxplot(ax=axes[1, 0], data=df, x='location', y='data.new_tests')
-    sns.boxplot(ax=axes[1, 1], data=df, x='location', y='data.total_tests_per_thousand')
-    sns.boxplot(ax=axes[1, 2], data=df, x='location', y='data.new_tests_per_thousand')
-    sns.boxplot(ax=axes[2, 0], data=df, x='location', y='data.stringency_index')
-    sns.boxplot(ax=axes[2, 1], data=df, x='location', y='data.new_tests_smoothed')
-    sns.boxplot(ax=axes[2, 2], data=df, x='location', y='data.new_tests_smoothed_per_thousand')
-    sns.boxplot(ax=axes[3, 0], data=df, x='location', y='data.total_cases')
-    sns.boxplot(ax=axes[3, 1], data=df, x='location', y='data.new_cases')
-    sns.boxplot(ax=axes[3, 2], data=df, x='location', y='data.total_cases_per_million')
-    sns.boxplot(ax=axes[4, 0], data=df, x='location', y='data.new_cases_per_million')
-    sns.boxplot(ax=axes[4, 1], data=df, x='location', y='data.new_cases_smoothed')
-    sns.boxplot(ax=axes[4, 2], data=df, x='location', y='data.total_deaths')
-    sns.boxplot(ax=axes[5, 0], data=df, x='location', y='data.new_deaths')
-    sns.boxplot(ax=axes[5, 1], data=df, x='location', y='data.new_deaths_smoothed')
-    sns.boxplot(ax=axes[5, 2], data=df, x='location', y='data.new_cases_smoothed_per_million')
-    sns.boxplot(ax=axes[6, 0], data=df, x='location', y='data.total_deaths_per_million')
-    sns.boxplot(ax=axes[6, 1], data=df, x='location', y='data.new_deaths_per_million')
-    sns.boxplot(ax=axes[6, 2], data=df, x='location', y='data.new_deaths_smoothed_per_million')
-    sns.boxplot(ax=axes[7, 0], data=df, x='location', y='data.positive_rate')
-    sns.boxplot(ax=axes[7, 1], data=df, x='location', y='data.tests_per_case')
-    sns.boxplot(ax=axes[7, 2], data=df, x='location', y='data.reproduction_rate')
+    sns.boxplot(ax=axes[0, 0], data=df, x='location', y='data.total_tests')
+    sns.boxplot(ax=axes[0, 1], data=df, x='location', y='data.new_tests')
+    sns.boxplot(ax=axes[0, 2], data=df, x='location', y='data.total_tests_per_thousand')
+    sns.boxplot(ax=axes[1, 0], data=df, x='location', y='data.new_tests_per_thousand')
+    sns.boxplot(ax=axes[1, 1], data=df, x='location', y='data.stringency_index')
+    sns.boxplot(ax=axes[1, 2], data=df, x='location', y='data.new_tests_smoothed')
+    sns.boxplot(ax=axes[2, 0], data=df, x='location', y='data.new_tests_smoothed_per_thousand')
+    sns.boxplot(ax=axes[2, 1], data=df, x='location', y='data.total_cases')
+    sns.boxplot(ax=axes[2, 2], data=df, x='location', y='data.new_cases')
+    sns.boxplot(ax=axes[3, 0], data=df, x='location', y='data.total_cases_per_million')
+    sns.boxplot(ax=axes[3, 1], data=df, x='location', y='data.new_cases_per_million')
+    sns.boxplot(ax=axes[3, 2], data=df, x='location', y='data.new_cases_smoothed')
+    sns.boxplot(ax=axes[4, 0], data=df, x='location', y='data.total_deaths')
+    sns.boxplot(ax=axes[4, 1], data=df, x='location', y='data.new_deaths')
+    sns.boxplot(ax=axes[4, 2], data=df, x='location', y='data.new_deaths_smoothed')
+    sns.boxplot(ax=axes[5, 0], data=df, x='location', y='data.new_cases_smoothed_per_million')
+    sns.boxplot(ax=axes[5, 1], data=df, x='location', y='data.total_deaths_per_million')
+    sns.boxplot(ax=axes[5, 2], data=df, x='location', y='data.new_deaths_per_million')
+    sns.boxplot(ax=axes[6, 0], data=df, x='location', y='data.new_deaths_smoothed_per_million')
+    sns.boxplot(ax=axes[6, 1], data=df, x='location', y='data.tests_per_case')
+    sns.boxplot(ax=axes[6, 2], data=df, x='location', y='data.reproduction_rate')
     plt.savefig('..\\resources\\plots\\Outliers by Country{}.png'.format(file_name))
 
 def heatmap_with_column_filters (df,col_to_filter,filter_value,col1,col2,col3,col4,col5,col6):
@@ -177,58 +169,5 @@ def heatmap_with_column_filters (df,col_to_filter,filter_value,col1,col2,col3,co
     sns.heatmap(dfCorr, annot=True, fmt='.2f', square=True, cmap = 'Reds_r')
     plt.savefig('..\\resources\\plots\\heatmap_{}.png'.format(filter_value))
 
-def remove_outlier_filtro(df_inicial, df_in, col_name):
-    """
-    What it does:
-        # This function accepts 2 dataframes df_initial(without the filtered values) &df_in(with the filtered values), remove outliers, return cleaned data in a new dataframe.
 
-    What it needs:
-        # The dataframes and the column to check.
-
-    What it returns:
-        # Return cleaned data in a new dataframe
- 
-    GITHUB ID: @andreeaman
-    """
-
-    # df_inicial=todos los valores menos el filtro
-    # df_in= valores con filtro
-    q1 = df_in[col_name].quantile(0.25)
-    q3 = df_in[col_name].quantile(0.75)
-    iqr = q3-q1 #Interquartile range
-    fence_low  = q1-1.5*iqr
-    fence_high = q3+1.5*iqr
-    df_out_filtro = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)]
-    df_out=pd.concat([df_inicial,df_out_filtro])
-    return df_out
 # %%
-def position_countries(dt1=None, dt2=None, dt3=None):
-    fig, (ax1, ax2,ax3) = plt.subplots(3, figsize=(10, 10))
-    bar_width = 0.4
-    def label(ax=None, dt=None):
-        rects = ax.patches
-        list_index = dt.index.values.tolist()
-        labels = list_index
-        for rect, label in zip(rects, labels):
-            height = rect.get_height()
-            ax.text(rect.get_x() + rect.get_width() / 2, height + 5, label,
-                    ha='center', va='bottom')
-    #Primer gráfico
-    ax1.bar(dt1["location"],dt1["data.total_cases_per_million"], width=bar_width, color= 'lightblue')
-    label(ax=ax1, dt=dt1)
-    ax1.set_xlabel("Country")
-    ax1.set_ylabel("Total cases per million")
-    ax1.set_ylim([0,18000])
-    #Segundo gráfico
-    ax2.bar(dt2["location"],dt2["data.total_deaths_per_million"], width=bar_width, color= 'violet')
-    label(ax=ax2, dt=dt2)
-    ax2.set_xlabel("Country")
-    ax2.set_ylabel("Total deaths per million")
-    ax2.set_ylim([0,800])
-    #Tercer gráfico
-    ax3.bar(dt3["location"],dt3["life_expectancy"], width=bar_width, color= 'lightgreen')
-    label(ax=ax3, dt=dt3)
-    ax3.set_xlabel("Country")
-    ax3.set_ylabel("Life expectancy")
-    ax3.set_ylim([0,100])
-    return fig.show()
