@@ -171,3 +171,33 @@ def heatmap_with_column_filters (df,col_to_filter,filter_value,col1,col2,col3,co
 
 
 # %%
+def position_countries(dt1=None, dt2=None, dt3=None):
+    fig, (ax1, ax2,ax3) = plt.subplots(3, figsize=(10, 10))
+    bar_width = 0.4
+    def label(ax=None, dt=None):
+        rects = ax.patches
+        list_index = dt.index.values.tolist()
+        labels = list_index
+        for rect, label in zip(rects, labels):
+            height = rect.get_height()
+            ax.text(rect.get_x() + rect.get_width() / 2, height + 5, label,
+                    ha='center', va='bottom')
+    #Primer gráfico
+    ax1.bar(dt1["location"],dt1["data.total_cases_per_million"], width=bar_width, color= 'lightblue')
+    label(ax=ax1, dt=dt1)
+    ax1.set_xlabel("Country")
+    ax1.set_ylabel("Total cases per million")
+    ax1.set_ylim([0,18000])
+    #Segundo gráfico
+    ax2.bar(dt2["location"],dt2["data.total_deaths_per_million"], width=bar_width, color= 'violet')
+    label(ax=ax2, dt=dt2)
+    ax2.set_xlabel("Country")
+    ax2.set_ylabel("Total deaths per million")
+    ax2.set_ylim([0,800])
+    #Tercer gráfico
+    ax3.bar(dt3["location"],dt3["life_expectancy"], width=bar_width, color= 'lightgreen')
+    label(ax=ax3, dt=dt3)
+    ax3.set_xlabel("Country")
+    ax3.set_ylabel("Life expectancy")
+    ax3.set_ylim([0,100])
+    return fig.show()
