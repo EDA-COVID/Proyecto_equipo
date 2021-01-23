@@ -149,7 +149,7 @@ def boxplots_per_country(df,file_name):
     sns.boxplot(ax=axes[6, 2], data=df, x='location', y='data.reproduction_rate')
     plt.savefig('..\\resources\\plots\\Outliers by Country{}.png'.format(file_name))
 
-def heatmap_with_column_filters (df,col_to_filter,filter_value,col1,col2,col3,col4,col5,col6):
+def heatmap_with_column_filters (df,file_name,col1,col2,col3,col4,col5,col6):
     """
     What it does:
         # This function shows the heatmap of the dataframe(selection of 6 columns) and saves the image under the name you input.
@@ -159,15 +159,15 @@ def heatmap_with_column_filters (df,col_to_filter,filter_value,col1,col2,col3,co
         # Shows the heatmap
     GITHUB ID: @andreeaman
     """
-    df2 = df[[col_to_filter,col1,col2,col3,col4,col5,col6]]
-    # correlation 
-    df3 = df2[(df2[col_to_filter] == filter_value)]                       
-    dfCorr = df3.drop([col_to_filter], axis=1).corr()
+    df2 = df[[col1,col2,col3,col4,col5,col6]]                
+    df_corr = df2.corr()
+    matrix = np.triu(df2.corr())
     fig = plt.figure(figsize=(22,10))
     plt.subplot(121)   #  subplot 1 - female
-    plt.title('{}'.format(filter_value))
-    sns.heatmap(dfCorr, annot=True, fmt='.2f', square=True, cmap = 'Reds_r')
-    plt.savefig('..\\resources\\plots\\heatmap_{}.png'.format(filter_value))
+    plt.title('{}'.format(file_name))
+    sns.heatmap(df_corr,  annot=True, fmt='.2f', square=True, cmap='Blues_r',vmin=-1, vmax=1)
+    plt.savefig('..\\resources\\plots\\heatmap_{}.png'.format(file_name))
+
 
 
 # %%
@@ -201,3 +201,57 @@ def position_countries(dt1=None, dt2=None, dt3=None):
     ax3.set_ylabel("Life expectancy")
     ax3.set_ylim([0,100])
     return fig.show()
+
+# %%
+def heatmap_per_country (df):
+    """
+    What it does:
+        # This function shows the heatmap of the dataframe,it filters it by location and saves the image under the name you input.
+    What it needs:
+        # The dataframe and the filename
+    What it returns:
+            # Shows the heatmap
+    GITHUB ID: @andreeaman
+    """
+    fig = plt.figure(figsize = (30,50))
+    cont=1
+    for i in list(set(df.iloc[:,0])):         
+        reg = df.loc[df['location'] == i]
+        reg= reg.drop(columns=['location','life_expectancy','population'])   #we get the dataframe filter by region
+        ax1 = fig.add_subplot(5, 1, cont)   #we are adding a subplot to the general figure
+        ax1.title.set_text("Heatmap per country: "+i) #we set the title of the of ax1 with the current region name
+        matrix = np.triu(reg.corr())
+        sns.heatmap(reg.corr(),   mask=matrix,ax=ax1, cmap='Reds', annot=True, vmin=-1, vmax=1, linewidths=1)  
+        #By doing ax=ax1, we are assigning the subplot ax1 the current heatmap figure
+        fig.subplots_adjust(left=None, bottom=0.2, right=None, top=0.9, wspace= 1.1, hspace=0.9)
+        cont=cont+1
+
+    plt.savefig('..\\resources\\plots\\heatmap_per_country.png')
+        #standard configuration
+        #left = 0.125  # the left side of the subplots of the figure
+        #right = 0.9   # the right side of the subplots of the figure
+        #bottom = 0.1  # the bottom of the subplots of the figure
+        #top = 0.9     # the top of the subplots of the figure
+        #wspace = 0.2  # the amount of width reserved for space between subplots,
+                    # expressed as a fraction of the average axis width
+        #hspace = 0.2  # the amount of height reserved for space between subplots,
+                    # expressed as a fraction of the average axis height
+
+def columns_correlation_pivot(df,upper_val,lower_val): 
+    """
+    What it does:
+        # Filters pairwise correlation of columns, given the reference levels
+    What it needs:
+        # The dataframe,and the filter values
+    What it returns:
+        # It return the pivot of the dataframe with the corr() for each column.
+    GITHUB ID: @andreeaman
+    """
+    
+    corr_matrix = df.corr().abs()
+    sol = (corr_matrix.where(np.triu(np.ones(corr_matrix.shape), k=1).astype(np.bool)).stack().sort_values(ascending=False)).reset_index().rename(
+        columns={'level_0':'column_1','level_1':'column_2',0:'Corr'})
+    mayor_corr=sol[(sol['Corr']<upper_val) & (sol['Corr']>lower_val)]
+    mayor_corr_pivot=mayor_corr.sort_values(by='Corr',ascending=False).pivot_table(index=['column_1','column_2'], values='Corr')
+    pivot=mayor_corr_pivot.reset_index().groupby('column_1').sum().sort_values(by='Corr',ascending=False)
+    return pivot
