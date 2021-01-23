@@ -1,23 +1,32 @@
 import json
 from flask import Flask, request, render_template
-import os 
+import os,sys
+import pandas as pd
+
+z_file = __file__
+
+for i in range(4):
+    z_file = os.path.dirname(z_file)
+sys.path.append(z_file)
+
+from src.utils.folders_tb import jsonlink_df
+from src.utils.mining_data_tb import filter_df, df_covid
+
+covid = jsonlink_df('https://covid.ourworldindata.org/data/owid-covid-data.json').T
+covid = filter_df(covid,'location','Argentina','Russia', 'Colombia', 'Chile', 'Spain')
+covid = df_covid(covid,val1="data")
+
+covid_grouped = covid.groupby('location').mean().loc[: , ['data.new_cases']]
+covid_grouped = covid_grouped.astype(int).rename(columns={"data.new_cases": "n_c_averages"})
+covid_grouped.to_json('n_c_averages.json')
 
 app = Flask(__name__) 
 app.config["DEBUG"] = True
 
-def read_json(fullpath):
-    with open(fullpath,"r") as json_file_readed:
-        json_readed = json.load(json_file_readed)
-    return json_readed
-
 @app.route('/c_json')
 def home():
-    settings_file = os.path.dirname(__file__) + os.sep + "json1.json"
-    print(settings_file)
-    json_readed = read_json(fullpath= r"C:\Users\Anais\Documents\BRIDGE\COVID\src\covid_group_A.json")
-
-    return json_readed
-
+    n_c_averages = covid_grouped.to_json()
+    return n_c_averages
 
 @app.route('/give_me_id', methods=['GET'])
 def group_id():
