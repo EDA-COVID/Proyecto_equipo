@@ -255,3 +255,53 @@ def columns_correlation_pivot(df,upper_val,lower_val):
     mayor_corr_pivot=mayor_corr.sort_values(by='Corr',ascending=False).pivot_table(index=['column_1','column_2'], values='Corr')
     pivot=mayor_corr_pivot.reset_index().groupby('column_1').sum().sort_values(by='Corr',ascending=False)
     return pivot
+
+def daily_deaths_cases(dt=None):
+    fig1= plt.figure(figsize=(15,8))
+    fig1= sns.scatterplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt)
+    fig1.set_ylim([0,600])
+    fig2= plt.figure(figsize=(15,8))
+    fig2= sns.scatterplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt)
+    fig2.set_ylim([0,15])
+    fig1.set_xlabel("Date")
+    fig1.set_ylabel("Daily cases per million")
+    fig1.legend(title="Location")
+    fig2.set_xlabel("Date")
+    fig2.set_ylabel("Daily deaths per million")
+    fig2.legend(title="Location")
+    return fig1, fig2
+
+def daily_deaths_cases2(dt=None):
+    fig1= plt.figure(figsize=(15,8))
+    fig1= sns.lineplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt)
+    fig1.set_ylim([0,600])
+    fig2= plt.figure(figsize=(15,8))
+    fig2= sns.lineplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt)
+    fig2.set_ylim([0,15])
+    fig1.set_xlabel("Date")
+    fig1.set_ylabel("Daily cases per million")
+    fig1.legend(title="Location")
+    fig2.set_xlabel("Date")
+    fig2.set_ylabel("Daily deaths per million")
+    fig2.legend(title="Location")
+    return fig1, fig2
+def daily_deaths_cases3(dt=None):
+    fig, ax = plt.subplots(figsize=(12, 8))
+    x = np.arange(len(dt.location.unique()))
+    bar_width = 0.4
+    b1 = ax.bar(x, dt["data.new_cases_per_million"],
+                width=bar_width)
+    b2 = ax.bar(x + bar_width,  dt["data.new_deaths_per_million"],
+                width=bar_width)
+    ax.set_xticks(x + bar_width / 2)
+    ax.set_xticklabels(dt.location.unique())
+    ax.set_ylim([0,400])
+    return fig.show()
+
+def daily_deaths_cases4(dt=None, col_name=None, title=None):
+    fig1 = dt.groupby("location")[col_name].mean()
+    fig1.plot(kind="pie",autopct = "%1.0f%%", colors=['pink', 'lightblue','violet', 'lightgreen', 'gold'])
+    fig1= plt.xlabel(title)
+    fig1= plt.ylabel('')
+    return fig1
+    
