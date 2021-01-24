@@ -76,11 +76,16 @@ def detect_outliers_df(df,col_to_check,file_name):
 
 
 # %%
-def plot_clean_columns(df_name, df_column, y_label):
+def plot_clean_columns(df_name, column_1, y_label, column_2=None):
 
-    created_df = df_name.loc[:, ['location', df_column]]
+    if column_2==None:
+        created_df = df_name.loc[:, ['location', column_1]]
+    else:
+        created_df = df_name.loc[:, ['location', column_1, column_2]] 
+        created_df = created_df.loc[created_df[column_2]!=0.0]   
+    
     created_df = created_df.dropna()
-    created_df = created_df.loc[created_df[df_column]!=0.0]
+    created_df = created_df.loc[created_df[column_1]!=0.0]
     print(created_df.nunique())
     print('------')
 
@@ -93,7 +98,12 @@ def plot_clean_columns(df_name, df_column, y_label):
     print('------')
 
     for f in set(created_df['location']):
-        ax = created_df[created_df['location']==f].plot(y=df_column, title=f, legend=False, xlabel='', color='lightgreen', ylabel=y_label)
+        
+        if column_2==None:
+            ax = created_df[created_df['location']==f].plot(y=column_1, title=f, legend=False, xlabel='', color='lightgreen', ylabel=y_label)
+        else: 
+            ax = created_df[created_df['location']==f].plot(y=[column_1,column_2], title=f, legend=False, xlabel='', color=['lightgreen','purple'], ylabel=y_label)
+
         ax.set_xlim(pd.Timestamp('2020-02-01'), pd.Timestamp('2021-02-01'))
         ax.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
@@ -258,10 +268,10 @@ def columns_correlation_pivot(df,upper_val,lower_val):
 
 def daily_deaths_cases(dt=None):
     fig1= plt.figure(figsize=(15,8))
-    fig1= sns.scatterplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt)
+    fig1= sns.scatterplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig1.set_ylim([0,600])
     fig2= plt.figure(figsize=(15,8))
-    fig2= sns.scatterplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt)
+    fig2= sns.scatterplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig2.set_ylim([0,15])
     fig1.set_xlabel("Date")
     fig1.set_ylabel("Daily cases per million")
@@ -273,10 +283,10 @@ def daily_deaths_cases(dt=None):
 
 def daily_deaths_cases2(dt=None):
     fig1= plt.figure(figsize=(15,8))
-    fig1= sns.lineplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt)
+    fig1= sns.lineplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig1.set_ylim([0,600])
     fig2= plt.figure(figsize=(15,8))
-    fig2= sns.lineplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt)
+    fig2= sns.lineplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig2.set_ylim([0,15])
     fig1.set_xlabel("Date")
     fig1.set_ylabel("Daily cases per million")
