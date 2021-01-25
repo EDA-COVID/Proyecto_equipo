@@ -26,8 +26,8 @@ if base == 'j18':
     covid = filter_df(covid,'location','Argentina','Russia', 'Colombia', 'Chile', 'Spain')
     covid = df_covid(covid,val1="data")
 
-    covid_grouped = covid.groupby('location').mean().loc[: , ['data.new_cases']]
-    covid_grouped = covid_grouped.astype(int).rename(columns={"data.new_cases": "n_c_averages"})
+    covid_grouped = covid.groupby('data.date').mean().loc[: , ['data.new_cases']]
+    covid_grouped = covid_grouped.rename(columns={"data.new_cases": "n_c_averages"})
     n_c_averages = covid_grouped.to_json()
     print('-------\n')
     print(n_c_averages)
