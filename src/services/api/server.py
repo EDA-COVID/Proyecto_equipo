@@ -16,8 +16,8 @@ covid = jsonlink_df('https://covid.ourworldindata.org/data/owid-covid-data.json'
 covid = filter_df(covid,'location','Argentina','Russia', 'Colombia', 'Chile', 'Spain')
 covid = df_covid(covid,val1="data")
 
-covid_grouped = covid.groupby('location').mean().loc[: , ['data.new_cases']]
-covid_grouped = covid_grouped.astype(int).rename(columns={"data.new_cases": "n_c_averages"})
+covid_grouped = covid.groupby('data.date').mean().loc[: , ['data.new_cases']]
+covid_grouped = covid_grouped.rename(columns={"data.new_cases": "n_c_averages"})
 covid_grouped.to_json('n_c_averages.json')
 
 app = Flask(__name__) 
