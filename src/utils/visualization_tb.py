@@ -314,4 +314,30 @@ def daily_deaths_cases4(dt=None, col_name=None, title=None):
     fig1= plt.xlabel(title)
     fig1= plt.ylabel('')
     return fig1
+
     
+def plotly_dont_travel_to(df,column,chart_name):
+    """
+    What it does:
+        # This function accepts pivot dataframe and shows the evolution in time of the column you input
+
+    What it needs:
+        # The dataframe, the column which will be shown and the chart name. 
+
+    What it returns:
+        # Returns a plotly chart detailed by country
+ 
+    GITHUB ID: @andreeaman
+    """
+    fig = px.line(df, x="data.date", y=column, color='location', 
+                hover_data={"data.date": "|%B %d, %Y"},
+                title='Evolution per month', labels=dict(x="month", column=chart_name, location="Country"),
+                width=1300, height=600)
+    fig.update_xaxes(
+        dtick="M1",
+        tickformat="%b\n%Y")
+    fig.update_traces(connectgaps=True)
+    #fig.write_image("..\\resources\\plots\\Evolution_{}.png".format(chart_name))
+    fig.write_html('..\\reports\\Evolution_{}.html'.format(chart_name))
+    fig.show()  
+   

@@ -142,3 +142,84 @@ def sort_columns(dt=None, col_name=None):
     dt_col= dt.sort_values(col_name, ascending=True).reset_index()
     mask=dt_col.loc[(dt_col["location"]=="Argentina") | (dt_col["location"]=="Chile") | (dt_col["location"]=="Spain") | (dt_col["location"]=="Colombia") |(dt_col["location"]=="Russia")]
     return mask
+
+
+def pivot_table_from_df (df,col1,col2,col3):  
+    """
+    What it does:
+        # This function accepts dataframe and transform's it into a pivot table.
+
+    What it needs:
+        # The dataframe, the columns which will apear in the pivot
+
+    What it returns:
+        # Returns the reindexed dataframe
+ 
+    GITHUB ID: @andreeaman
+    """
+
+    dont_travel=df.pivot_table(index=['data.date','location'], 
+                                values=[col1,col2,col3])
+    return dont_travel.reset_index()
+
+def dont_travel_to(df,column):
+    """
+    What it does:
+        # This function indetifies when the column reaches it maximum value and prints the date corresponding to it 
+
+    What it needs:
+        # The dataframe, the column which will be analized 
+
+    What it returns:
+        # Returns the max values detailed by country and date
+ 
+    GITHUB ID: @andreeaman
+    """
+
+    for i in list(set(df.iloc[:,1])):         
+        reg = df.loc[df['location'] == i]
+
+        max_value =reg[column].max()
+        df_max_value=df[df[column]==max_value]
+
+        loc=df_max_value['location'].tolist()
+        date=df_max_value['data.date'].tolist()
+        value=df_max_value[column].tolist()
+
+
+
+        print('*************************************')
+        print("Don't travel to: ")
+        print(str([elem for elem in loc])+'\n')
+        print("On:")
+        print(str([elem for elem in date])+'\n')
+        print("{}".format(column))
+        print(str([elem for elem in value])+'\n')
+
+def replace_outlier_with_nan(df_in, col_name):
+    """
+    What it does:
+        # This function accepts a dataframes , remove outliers, return cleaned data in a new dataframe.
+
+    What it needs:
+        # The dataframes and the column to check.
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @andreeaman
+    """
+
+    q1 = df_in[col_name].quantile(0.25)
+    q3 = df_in[col_name].quantile(0.75)
+    iqr = q3-q1 #Interquartile range
+    fence_low  = q1-1.5*iqr
+    fence_high = q3+1.5*iqr
+
+    df_out = df_in.loc[(df_in[col_name] > fence_low) & (df_in[col_name] < fence_high)] #seleciono los valores que no tienen outliers
+    df_outliers=df_in.loc[(df_in[col_name] < fence_low) | (df_in[col_name] > fence_high)] # seleciono los valores que si tienen
+    df_outliers[col_name]=None
+    df_outliers[col_name]=pd.to_numeric(df_outliers[col_name])
+    df_final= pd.concat([df_out,df_outliers])
+    
+    return df_final
