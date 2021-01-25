@@ -20,3 +20,9 @@ def jsonlink_df(url_json):
     json_readed = json.loads(r.text)
     df = pd.DataFrame(json_readed)
     return df
+
+def read_json(fullpath):
+
+    with open(fullpath,"r") as json_file_readed:
+        json_readed = json.load(json_file_readed)
+    return json_readed

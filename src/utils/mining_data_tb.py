@@ -1,5 +1,13 @@
 import pandas as pd 
 import json
+import os, sys
+
+z_file = __file__
+
+for i in range(2):
+    z_file = os.path.dirname(z_file)
+sys.path.append(z_file)
+
 from utils.folders_tb import jsonlink_df
 
 def extract_dict_values(df_name, column_df):
