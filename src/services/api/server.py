@@ -24,7 +24,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return app.send_static_file('greet.html')
+    return app.send_api_file('greet.html')
 
 @app.route("/greet")
 def greet():
