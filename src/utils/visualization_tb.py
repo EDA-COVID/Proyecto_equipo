@@ -269,7 +269,7 @@ def columns_correlation_pivot(df,upper_val,lower_val):
 def daily_deaths_cases(dt=None):
     fig1= plt.figure(figsize=(15,8))
     fig1= sns.scatterplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt, palette="Set2")
-    fig1.set_ylim([0,600])
+    fig1.set_ylim([0,800])
     fig2= plt.figure(figsize=(15,8))
     fig2= sns.scatterplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig2.set_ylim([0,15])
@@ -284,7 +284,7 @@ def daily_deaths_cases(dt=None):
 def daily_deaths_cases2(dt=None):
     fig1= plt.figure(figsize=(15,8))
     fig1= sns.lineplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt, palette="Set2")
-    fig1.set_ylim([0,600])
+    fig1.set_ylim([0,800])
     fig2= plt.figure(figsize=(15,8))
     fig2= sns.lineplot(x= dt["data.date"], y=dt["data.new_deaths_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig2.set_ylim([0,15])
@@ -295,17 +295,11 @@ def daily_deaths_cases2(dt=None):
     fig2.set_ylabel("Daily deaths per million")
     fig2.legend(title="Location")
     return fig1, fig2
-def daily_deaths_cases3(dt=None):
-    fig, ax = plt.subplots(figsize=(12, 8))
-    x = np.arange(len(dt.location.unique()))
-    bar_width = 0.4
-    b1 = ax.bar(x, dt["data.new_cases_per_million"],
-                width=bar_width)
-    b2 = ax.bar(x + bar_width,  dt["data.new_deaths_per_million"],
-                width=bar_width)
-    ax.set_xticks(x + bar_width / 2)
-    ax.set_xticklabels(dt.location.unique())
-    ax.set_ylim([0,400])
+def daily_deaths_cases3(dt=None, col_name=None, name_col=None):
+    fig = px.bar(dt, x='data.date', y=col_name, color="location", width= 1000,height=400)
+    fig.update_xaxes(title_text = "Date")
+    fig.update_yaxes(title_text = name_col)
+    fig.update_layout(legend_title_text='Location')
     return fig.show()
 
 def daily_deaths_cases4(dt=None, col_name=None, title=None):
