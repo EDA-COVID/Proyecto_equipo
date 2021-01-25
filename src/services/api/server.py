@@ -28,7 +28,7 @@ def home():
 
 @app.route("/greet")
 def greet():
-    a = request.args.get('name')
+    a = request.args.get('id')
     if a == "A86":
         appDict = {'token': 'A43649037'}
         app_json = json.dumps(appDict)
