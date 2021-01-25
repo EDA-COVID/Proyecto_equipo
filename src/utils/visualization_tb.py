@@ -182,6 +182,18 @@ def heatmap_with_column_filters (df,file_name,col1,col2,col3,col4,col5,col6):
 
 # %%
 def position_countries(dt1=None, dt2=None, dt3=None):
+     """
+    What it does:
+        #This function show  the position of our countries with respect to total infected, total deaths and life expectancy. 
+    
+    What it needs:
+        # The dataframe and filter values
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @mardeldom
+    """
     fig, (ax1, ax2,ax3) = plt.subplots(3, figsize=(10, 10))
     bar_width = 0.4
     def label(ax=None, dt=None):
@@ -267,6 +279,17 @@ def columns_correlation_pivot(df,upper_val,lower_val):
     return pivot
 
 def daily_deaths_cases(dt=None):
+    """
+    What it does:
+        # This function represents the daily cases and deaths by covid in scatterplot format.
+
+    What it needs:
+        #  Import the necessary libraries, the dataframe and filter outliers.
+
+    What it returns:
+        # Returns a graph showing on the x-axis the months of 2020 and part of 2021 and on the y-axis the new cases and new deaths. 
+        GITHUB ID: @mardeldom
+    """
     fig1= plt.figure(figsize=(15,8))
     fig1= sns.scatterplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig1.set_ylim([0,800])
@@ -282,6 +305,17 @@ def daily_deaths_cases(dt=None):
     return fig1, fig2
 
 def daily_deaths_cases2(dt=None):
+    """
+    What it does:
+        # This function represents the daily cases and deaths by covid in lineplot format.
+
+    What it needs:
+        #  Import the necessary libraries, the dataframe and filter outliers.
+
+    What it returns:
+        # Returns a graph showing on the x-axis the months of 2020 and part of 2021 and on the y-axis the new cases and new deaths. 
+        GITHUB ID: @mardeldom
+    """
     fig1= plt.figure(figsize=(15,8))
     fig1= sns.lineplot(x= dt["data.date"], y=dt["data.new_cases_per_million"], hue=dt["location"], data=dt, palette="Set2")
     fig1.set_ylim([0,800])
@@ -296,6 +330,17 @@ def daily_deaths_cases2(dt=None):
     fig2.legend(title="Location")
     return fig1, fig2
 def daily_deaths_cases3(dt=None, col_name=None, name_col=None):
+    """
+    What it does:
+        # This function represents the daily cases and deaths by covid in bar format.
+
+    What it needs:
+        #  Import the necessary libraries, the dataframe and filter outliers.
+
+    What it returns:
+        # Returns a graph showing on the x-axis the months of 2020 and part of 2021 and on the y-axis the new cases and new deaths. 
+        GITHUB ID: @mardeldom
+    """
     fig = px.bar(dt, x='data.date', y=col_name, color="location", width= 1000,height=400)
     fig.update_xaxes(title_text = "Date")
     fig.update_yaxes(title_text = name_col)
@@ -303,6 +348,17 @@ def daily_deaths_cases3(dt=None, col_name=None, name_col=None):
     return fig.show()
 
 def daily_deaths_cases4(dt=None, col_name=None, title=None):
+    """
+    What it does:
+        # This function represents the daily cases and deaths by covid in pie chart format.
+
+    What it needs:
+        #  Import the necessary libraries, the dataframe and filter outliers.
+
+    What it returns:
+        # Returns the percentage that each country represents with respect to the total number of cases and deaths per day.
+        GITHUB ID: @mardeldom
+    """
     fig1 = dt.groupby("location")[col_name].mean()
     fig1.plot(kind="pie",autopct = "%1.0f%%", colors=['pink', 'lightblue','violet', 'lightgreen', 'gold'])
     fig1= plt.xlabel(title)

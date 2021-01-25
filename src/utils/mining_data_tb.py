@@ -132,13 +132,36 @@ def data_paises_clean():
     return covid_paises
 
 def group(dt=data_complete_clean(),col1=None, col2=None, col3=None, col4=None):
-    #Agrupación de las variables
+    """
+    What it does:
+        #This function groups all countries with respect to total infected, total deaths and life expectancy. 
+    
+    What it needs:
+        # we need to filter by the columns we want to analyse
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @mardeldom
+    """
     covid = dt.loc[:,[col1, col2, col3, col4]]
-    #covid = covid.dropna()
+    
     group_col= covid.groupby(col1).mean()
     return group_col
 
 def sort_columns(dt=None, col_name=None):
+     """
+    What it does:
+        #This function sorts the countries from smallest to largest according to the values offered by each column. 
+    
+    What it needs:
+        # we need to sort by the columns we want to analyse
+
+    What it returns:
+        # Return cleaned data in a new dataframe
+ 
+    GITHUB ID: @mardeldom
+    """
     dt_col= dt.sort_values(col_name, ascending=True).reset_index()
     mask=dt_col.loc[(dt_col["location"]=="Argentina") | (dt_col["location"]=="Chile") | (dt_col["location"]=="Spain") | (dt_col["location"]=="Colombia") |(dt_col["location"]=="Russia")]
     return mask
